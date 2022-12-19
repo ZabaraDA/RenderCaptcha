@@ -29,35 +29,31 @@ namespace WpfApp6
     {
         Random randomСoordinates = new Random();
 
-        string s;
+        string captchaContentString;
         bool a = true;
-        int y1;
+        int xLine;
+        int yLine;
         int x1;
+        int y1;
         public MainWindow()
         {
             InitializeComponent();
-
         }
 
-
-
-        [Obsolete]
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
             grd.Children.Clear();
+
             for (int i = 0; i < 20; i++)
             {
-                string aa = "";
-                s += aa += (char)(randomСoordinates.Next(1040, 1104));
+                string symbolString = "";
+                captchaContentString += symbolString += (char)randomСoordinates.Next(1040, 1104);
 
                 Line objline = new Line();
 
                 objline.Stroke = System.Windows.Media.Brushes.Black;
                 objline.Fill = System.Windows.Media.Brushes.Black;
-
-                int xLine = randomСoordinates.Next(500);
-                int yLine = randomСoordinates.Next(500);
-
+  
                 if (a == true)
                 {
                     objline.X1 = 50;
@@ -66,39 +62,36 @@ namespace WpfApp6
                 }
                 else
                 {
-                    objline.X1 = x1;
-                    objline.Y1 = y1;
+                    objline.X1 = xLine;
+                    objline.Y1 = yLine;
                 }
+                xLine = randomСoordinates.Next(500);
+                yLine = randomСoordinates.Next(500);
 
                 objline.X2 = xLine;
                 objline.Y2 = yLine;
-                x1 = xLine;
-                y1 = yLine;
 
-                FormattedText formattedText = new FormattedText(aa,
+                FormattedText formattedText = new FormattedText(symbolString,
                 CultureInfo.GetCultureInfo("en-us"),
-                  FlowDirection.LeftToRight,
-                   new Typeface(
+                FlowDirection.LeftToRight,
+                new Typeface(
                         new System.Windows.Media.FontFamily(),
                         FontStyles.Italic,
                         FontWeights.Bold,
                         FontStretches.Normal),
-                        24, Brushes.Black);
+                        23, Brushes.Black,2);
 
-                Geometry geometry = formattedText.BuildGeometry(new System.Windows.Point(objline.X1, objline.Y1));
+                Geometry symbolGeometry = formattedText.BuildGeometry(new System.Windows.Point(objline.X1, objline.Y1));
 
-                var myPath = new Path();
-                myPath.Stroke = System.Windows.Media.Brushes.Black;
-                myPath.Fill = System.Windows.Media.Brushes.MediumSlateBlue;
-                myPath.StrokeThickness = 1;
-                myPath.Data = geometry;
+                var symbolPath = new Path();
+                symbolPath.Stroke = System.Windows.Media.Brushes.Black;
+                symbolPath.Fill = System.Windows.Media.Brushes.MediumSlateBlue;
+                symbolPath.StrokeThickness = 1;
+                symbolPath.Data = symbolGeometry;
 
-                grd.Children.Add(myPath);
+                grd.Children.Add(symbolPath);
                 grd.Children.Add(objline);
-
-
             }
-
         }
 
         private void addButton_Click1(object sender, RoutedEventArgs e)
@@ -199,6 +192,16 @@ namespace WpfApp6
 
 
             }
+
+            //FormattedText formattedText1 = new FormattedText(aa,
+            //    CultureInfo.GetCultureInfo("en-us"),
+            //      FlowDirection.LeftToRight,
+            //       new Typeface(
+            //            new System.Windows.Media.FontFamily(),
+            //            FontStyles.Italic,
+            //            FontWeights.Bold,
+            //            FontStretches.Normal),
+            //            24, Brushes.Black);
 
         }
     }

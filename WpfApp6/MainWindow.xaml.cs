@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Printing;
 using System.Globalization;
-using System.IO;
+
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -18,7 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
-using Path = System.Windows.Shapes.Path;
+
 
 namespace WpfApp6
 {
@@ -28,11 +29,15 @@ namespace WpfApp6
     public partial class MainWindow : Window
     {
         Random randomСoordinates = new Random();
+        List<(int x, int y)> coordinatesList = new List<(int x, int y)>();
 
         string captchaContentString;
-        bool a = true;
-        int xLine;
-        int yLine;
+        bool correctCoordinatesBool = false;
+        string symbolString;
+        int xC;
+        int yC;
+        int distant = 50;
+
         int x1;
         int y1;
         public MainWindow()
@@ -43,56 +48,120 @@ namespace WpfApp6
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
             grd.Children.Clear();
+            coordinatesList.Add((randomСoordinates.Next(700), randomСoordinates.Next(700)));
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 10; i++)
             {
-                string symbolString = "";
+                symbolString = "";
                 captchaContentString += symbolString += (char)randomСoordinates.Next(1040, 1104);
 
-                Line objline = new Line();
+                Line directionLine = new Line();
 
-                objline.Stroke = System.Windows.Media.Brushes.Black;
-                objline.Fill = System.Windows.Media.Brushes.Black;
-  
-                if (a == true)
+                directionLine.Stroke = System.Windows.Media.Brushes.Black;
+
+                directionLine.X1 = coordinatesList[i].x;
+                directionLine.Y1 = coordinatesList[i].y;
+
+                correctCoordinatesBool = false;
+                while (correctCoordinatesBool != true)
                 {
-                    objline.X1 = 50;
-                    objline.Y1 = 50;
-                    a = false;
+                    xC = randomСoordinates.Next(700);
+                    for (int j = 0; j < coordinatesList.Count; )
+                    {
+                       
+                        if (xC + distant < coordinatesList[j].x || xC - distant > coordinatesList[j].x)
+                        {
+                            j++;
+                            correctCoordinatesBool = true;
+                        }
+                        else
+                        {
+                            correctCoordinatesBool = false;
+                            break; 
+                        }
+                    }
                 }
-                else
+                correctCoordinatesBool = false;
+                while (correctCoordinatesBool != true)
                 {
-                    objline.X1 = xLine;
-                    objline.Y1 = yLine;
+                    yC = randomСoordinates.Next(700);
+                    for (int j = 0; j < coordinatesList.Count;)
+                    {
+                        
+                        if (yC + distant < coordinatesList[j].y || yC - distant > coordinatesList[j].y)
+                        {
+                            j++;
+                            correctCoordinatesBool = true;
+
+                        }
+                        else
+                        {
+                            correctCoordinatesBool = false;
+                            break;
+
+                        }
+                    }
                 }
-                xLine = randomСoordinates.Next(500);
-                yLine = randomСoordinates.Next(500);
 
-                objline.X2 = xLine;
-                objline.Y2 = yLine;
+                lw.ItemsSource = coordinatesList.ToList();
+                    tb.Text = xC.ToString() + " " + yC.ToString();
+                coordinatesList.Add((xC, yC));
 
-                FormattedText formattedText = new FormattedText(symbolString,
-                CultureInfo.GetCultureInfo("en-us"),
-                FlowDirection.LeftToRight,
-                new Typeface(
-                        new System.Windows.Media.FontFamily(),
-                        FontStyles.Italic,
-                        FontWeights.Bold,
-                        FontStretches.Normal),
-                        23, Brushes.Black,2);
+                //coordinatesList.Add((randomСoordinates.Next(500), randomСoordinates.Next(500)));
 
-                Geometry symbolGeometry = formattedText.BuildGeometry(new System.Windows.Point(objline.X1, objline.Y1));
+                directionLine.X2 = coordinatesList[i + 1].x;
+                directionLine.Y2 = coordinatesList[i + 1].y;
+
+                FormattedText formattedText = new FormattedText(
+                    symbolString,
+                    CultureInfo.GetCultureInfo("en-us"),
+                    FlowDirection.LeftToRight,
+                    new Typeface(new System.Windows.Media.FontFamily(),
+                    FontStyles.Italic,
+                    FontWeights.Bold,
+                    FontStretches.Normal),
+                    24, Brushes.Black,
+                    VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+                Geometry symbolGeometry = formattedText.BuildGeometry(new System.Windows.Point(directionLine.X1, directionLine.Y1));
 
                 var symbolPath = new Path();
                 symbolPath.Stroke = System.Windows.Media.Brushes.Black;
                 symbolPath.Fill = System.Windows.Media.Brushes.MediumSlateBlue;
-                symbolPath.StrokeThickness = 1;
                 symbolPath.Data = symbolGeometry;
 
                 grd.Children.Add(symbolPath);
-                grd.Children.Add(objline);
+                grd.Children.Add(directionLine);
             }
+            coordinatesList.Clear();
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         private void addButton_Click1(object sender, RoutedEventArgs e)
         {
@@ -171,6 +240,7 @@ namespace WpfApp6
 
                 int xLine = randomСoordinates.Next(400);
                 int yLine = randomСoordinates.Next(400);
+                bool a = true;
                 if (a == true)
                 {
                     objline.X1 = addButton.ActualWidth;
@@ -205,7 +275,18 @@ namespace WpfApp6
 
         }
     }
+    //public partial class Сoordinates
+    //{
+    //    int x { get; set; }
+    //    int y { get; set; }
 
+    //    public Coordinates(int xx, int yy)
+    //    {
+    //        x = xx;
+    //        y = yy;
+    //    }
+
+    //}
 
 
 
